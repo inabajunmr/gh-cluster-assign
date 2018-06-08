@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "gh-cluster-assign",
+  "version": "1.0",
+  "description": "Assign multiple member by 1 click on GitHub",
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+  "permissions": [
+    "https://github.com/*"
+  ],
+  "icons" : {
+    "128": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": [
+      "scripts/main.js"
+      ]
+    }
+  ]
+}
