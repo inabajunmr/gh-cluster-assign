@@ -140,7 +140,12 @@ gh_cluster.observeAsigneeList = function () {
 
 gh_cluster.sendAsigneeList = function () {
     var current_asignee_list = gh_cluster.getCurrentAsigneeList();
-    chrome.runtime.sendMessage({ value: { key: "asignee_ids", value: current_asignee_list } });
+    var current_reviewer_list = gh_cluster.getCurrentReviewerList();
+
+    var concat_list = current_asignee_list.concat(current_reviewer_list);
+    var merge_list = concat_list.filter(function (item, pos) { return concat_list.indexOf(item) == pos });
+
+    chrome.runtime.sendMessage({ value: { key: "asignee_ids", value: merge_list } });
 }
 
 // return current asignee id list
@@ -153,6 +158,17 @@ gh_cluster.getCurrentAsigneeList = function () {
     });
     console.log(asignee_ids);
     return asignee_ids;
+}
+
+gh_cluster.getCurrentReviewerList = function () {
+    var list_node = document.querySelector(".sidebar-assignee:nth-child(2) .js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
+    var reviewer_ids = [];
+    Array.prototype.forEach.call(list_node, reviewer_node => {
+        var reviewer_id = reviewer_node.querySelector("[data-hovercard-user-id]").getAttribute("data-hovercard-user-id");
+        reviewer_ids.push(reviewer_id);
+    });
+    console.log(reviewer_ids);
+    return reviewer_ids;
 }
 
 gh_cluster.sendClustersByStorage = function () {
