@@ -9,4 +9,3 @@ I'm bored to assign all team member on GitHub Issue or PR.
  * Cluster icon(anytime my face now) 
  * Run only GitHub issue and pr page
  * Not show cluster on asignees list for second time open
- * When not change asignee, increase same cluster option
