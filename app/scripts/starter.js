@@ -81,7 +81,7 @@ gh_cluster.observeAsigneeList = function () {
 
 gh_cluster.sendAsigneeList = function () {
     var current_asignee_list = gh_cluster.getCurrentAsigneeList();
-    chrome.runtime.sendMessage({ value: current_asignee_list });
+    chrome.runtime.sendMessage({ value: { key: "asignee_ids", value: current_asignee_list } });
 }
 
 // return current asignee id list
@@ -102,3 +102,17 @@ element.addEventListener('click', gh_cluster.start, false);
 // start observe for send asignee to background
 gh_cluster.sendAsigneeList();
 gh_cluster.observeAsigneeList();
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    var storage_key = "gh-cluster-assign";
+    console.log("add value from popup");
+    console.log(message);
+    localStorage.setItem(storage_key, message);
+    chrome.runtime.sendMessage({ value: { key: "cluster_list", value: message } });
+    return;
+});
+
+// TODO function
+var storage_key = "gh-cluster-assign";
+var clusters = localStorage.getItem(storage_key);
+chrome.runtime.sendMessage({ value: { key: "cluster_list", value: clusters } });
