@@ -153,11 +153,15 @@ gh_cluster.sendClustersByStorage = function () {
     chrome.runtime.sendMessage({ value: { key: "cluster_list", value: clusters } });
 }
 
-var element = document.querySelector(".sidebar-assignee button");
-element.addEventListener('click', gh_cluster.start, false);
+var element1 = document.querySelector(".sidebar-assignee button");
+element1.addEventListener('click', gh_cluster.start, false);
 
-var element = document.querySelector(".sidebar-assignee:nth-child(2) button");
-element.addEventListener('click', gh_cluster.start, false);
+// pull request only
+var element2 = document.querySelector(".sidebar-assignee:nth-child(2) button");
+if (element2 != null) {
+    element2.addEventListener('click', gh_cluster.start, false);
+}
+
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // TODO shoud I filter by sender?
