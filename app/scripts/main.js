@@ -1,3 +1,4 @@
+// Create node for one cluster as asignee user.
 function createClusterDom(cluster_name, asignee_ids) {
     var cluster_html = `
     <div class="select-menu-item js-navigation-item" role="menuitem">
@@ -11,7 +12,7 @@ function createClusterDom(cluster_name, asignee_ids) {
         </div>
         <div class="select-menu-item-text lh-condensed">
             <span class="select-menu-item-heading">
-                <span class="js-username">CLUSTER1</span>
+                <span class="js-username"></span>
                 <span class="description js-description">gh-cluster</span>
             </span>
         </div>
@@ -27,9 +28,14 @@ function createClusterDom(cluster_name, asignee_ids) {
         cluster.appendChild(createAsigneeInputTag(asignee_id));
     });
 
+    var name_node = document.createTextNode(cluster_name);
+    var cluster_name_node = target.getElementsByClassName("js-username")[0];
+    cluster_name_node.appendChild(name_node);
+
     return target;
 }
 
+// create node for input new asignee.(means one user)
 function createAsigneeInputTag(asignee_id) {
     var asignee_html = `<input style="display:none" type="checkbox" name="issue[user_assignee_ids][]">`;
     var tempEl = document.createElement('div');
@@ -42,6 +48,7 @@ function createAsigneeInputTag(asignee_id) {
 function start() {
 
     console.log("start");
+    // wait for loading asignee list dom
     var find_asignee_list_interbal_id = setInterval(findTargetElement, 1000);
 
     function findTargetElement() {
