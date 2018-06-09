@@ -4,7 +4,7 @@ var gh_cluster = {
 };
 
 // Create node for one cluster as asignee user.
-gh_cluster.createClusterDom = function (cluster_name, asignee_ids) {
+gh_cluster.createClusterDom = function (cluster_name, target_ids, kind) {
     var cluster_html = `
     <div class="select-menu-item js-navigation-item" role="menuitem">
         <svg class="octicon octicon-check select-menu-item-icon" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true">
@@ -27,11 +27,20 @@ gh_cluster.createClusterDom = function (cluster_name, asignee_ids) {
     tempEl.innerHTML = cluster_html;
     var target = tempEl.firstElementChild;
     var cluster = target.getElementsByClassName("cluster")[0];
-    console.log(asignee_ids);
+    console.log(target_ids);
 
-    asignee_ids.forEach(asignee_id => {
-        cluster.appendChild(gh_cluster.createAsigneeInputTag(asignee_id));
-    });
+    console.log(kind);
+    if (kind == "assignee") {
+        target_ids.forEach(target_ids => {
+            cluster.appendChild(gh_cluster.createAssigneeInputTag(target_ids));
+        });
+    }
+
+    if (kind == "reviewer") {
+        target_ids.forEach(target_ids => {
+            cluster.appendChild(gh_cluster.createReviwerInputTag(target_ids));
+        });
+    }
 
     var name_node = document.createTextNode(cluster_name);
     var cluster_name_node = target.getElementsByClassName("js-username")[0];
@@ -41,21 +50,32 @@ gh_cluster.createClusterDom = function (cluster_name, asignee_ids) {
 }
 
 // create node for input new asignee.(means one user)
-gh_cluster.createAsigneeInputTag = function (asignee_id) {
+gh_cluster.createAssigneeInputTag = function (target_id) {
     var asignee_html = `<input style="display:none" type="checkbox" name="issue[user_assignee_ids][]">`;
     var tempEl = document.createElement('div');
     tempEl.innerHTML = asignee_html;
     var target = tempEl.firstElementChild;
-    target.setAttribute("value", asignee_id);
+    target.setAttribute("value", target_id);
+    return target;
+}
+
+// create node for input new reviewer.(means one user)
+gh_cluster.createReviwerInputTag = function (target_id) {
+    var reviwer_html = `<input style="display:none" type="checkbox" name="reviewer_user_ids[]">`;
+    var tempEl = document.createElement('div');
+    tempEl.innerHTML = reviwer_html;
+    var target = tempEl.firstElementChild;
+    target.setAttribute("value", target_id);
     return target;
 }
 
 gh_cluster.start = function () {
     console.log("start");
     // wait for loading asignee list dom
-    var find_asignee_list_interbal_id = setInterval(constructClusterOptionDom, 1000);
+    var find_asignee_list_interbal_id = setInterval(constructAsigneeClusterOptionDom, 200);
+    var find_reviewer_list_interbal_id = setInterval(constructReviewerClusterOptionDom, 200);
 
-    function constructClusterOptionDom() {
+    function constructAsigneeClusterOptionDom() {
         console.log("find start");
         if (localStorage.getItem(gh_cluster.storage_key) == null) {
             return;
@@ -63,7 +83,6 @@ gh_cluster.start = function () {
         var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
         console.log("construct clusters")
         console.log(clusters)
-        // TODO loop by clusters and use asignee id and cluster name
 
         Array.prototype.forEach.call(clusters, cluster => {
             var asignee_list_asignee_node = document.querySelector('div[data-filterable-for="assignee-filter-field"] div');
@@ -71,7 +90,28 @@ gh_cluster.start = function () {
                 clearInterval(find_asignee_list_interbal_id);
                 var asignee_list_node = document.querySelector('div[data-filterable-for="assignee-filter-field"]');
                 // var asignees = ["10000393", "16970553"];
-                asignee_list_node.insertBefore(gh_cluster.createClusterDom(cluster.name, cluster.ids), asignee_list_node.firstChild);
+                asignee_list_node.insertBefore(gh_cluster.createClusterDom(cluster.name, cluster.ids, "assignee"), asignee_list_node.firstChild);
+                console.log("find end")
+            }
+        });
+    }
+
+    function constructReviewerClusterOptionDom() {
+        console.log("find start");
+        if (localStorage.getItem(gh_cluster.storage_key) == null) {
+            return;
+        }
+        var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
+        console.log("construct clusters")
+        console.log(clusters)
+
+        Array.prototype.forEach.call(clusters, cluster => {
+            var asignee_list_reviewer_node = document.querySelector('div[data-filterable-for="review-filter-field"] div');
+            if (asignee_list_reviewer_node != null) {
+                clearInterval(find_reviewer_list_interbal_id);
+                var reviewer_list_node = document.querySelector('div[data-filterable-for="review-filter-field"]');
+                // reviewer_user_ids[]
+                reviewer_list_node.insertBefore(gh_cluster.createClusterDom(cluster.name, cluster.ids, "reviewer"), reviewer_list_node.firstChild);
                 console.log("find end")
             }
         });
@@ -114,6 +154,9 @@ gh_cluster.sendClustersByStorage = function () {
 }
 
 var element = document.querySelector(".sidebar-assignee button");
+element.addEventListener('click', gh_cluster.start, false);
+
+var element = document.querySelector(".sidebar-assignee:nth-child(2) button");
 element.addEventListener('click', gh_cluster.start, false);
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
