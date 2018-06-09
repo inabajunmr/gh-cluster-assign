@@ -80,6 +80,15 @@ gh_cluster.observeAsigneeList = function () {
     observer.observe(target, options);
 }
 
+gh_cluster.getCurrentAsigneeList = function () {
+    var list = document.querySelector(".sidebar-assignee .js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
+
+    Array.prototype.forEach.call(list, asignee_node => {
+        var asignee_id = asignee_node.querySelector("[data-hovercard-user-id]").getAttribute("data-hovercard-user-id");
+        console.log(asignee_id);
+    });
+}
+
 var element = document.querySelector(".sidebar-assignee button");
 element.addEventListener('click', gh_cluster.start, false);
 
