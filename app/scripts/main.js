@@ -1,5 +1,8 @@
+`use strict`;
+var gh_cluster = {};
+
 // Create node for one cluster as asignee user.
-function createClusterDom(cluster_name, asignee_ids) {
+gh_cluster.createClusterDom = function (cluster_name, asignee_ids) {
     var cluster_html = `
     <div class="select-menu-item js-navigation-item" role="menuitem">
         <svg class="octicon octicon-check select-menu-item-icon" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true">
@@ -25,7 +28,7 @@ function createClusterDom(cluster_name, asignee_ids) {
     console.log(asignee_ids);
 
     asignee_ids.forEach(asignee_id => {
-        cluster.appendChild(createAsigneeInputTag(asignee_id));
+        cluster.appendChild(gh_cluster.createAsigneeInputTag(asignee_id));
     });
 
     var name_node = document.createTextNode(cluster_name);
@@ -36,7 +39,7 @@ function createClusterDom(cluster_name, asignee_ids) {
 }
 
 // create node for input new asignee.(means one user)
-function createAsigneeInputTag(asignee_id) {
+gh_cluster.createAsigneeInputTag = function (asignee_id) {
     var asignee_html = `<input style="display:none" type="checkbox" name="issue[user_assignee_ids][]">`;
     var tempEl = document.createElement('div');
     tempEl.innerHTML = asignee_html;
@@ -45,25 +48,23 @@ function createAsigneeInputTag(asignee_id) {
     return target;
 }
 
-function start() {
-
+gh_cluster.start = function () {
     console.log("start");
     // wait for loading asignee list dom
     var find_asignee_list_interbal_id = setInterval(findTargetElement, 1000);
 
     function findTargetElement() {
         console.log("find start");
-        var target = document.querySelector('div[data-filterable-for="assignee-filter-field"] div');
-        if (target != null) {
+        var asignee_list_asignee_node = document.querySelector('div[data-filterable-for="assignee-filter-field"] div');
+        if (asignee_list_asignee_node != null) {
             clearInterval(find_asignee_list_interbal_id);
-            var target2 = document.querySelector('div[data-filterable-for="assignee-filter-field"]');
+            var asignee_list_node = document.querySelector('div[data-filterable-for="assignee-filter-field"]');
             var asignees = ["10000393", "16970553"];
-            target2.insertBefore(createClusterDom("test", asignees), target2.firstChild);
+            asignee_list_node.insertBefore(gh_cluster.createClusterDom("test", asignees), asignee_list_node.firstChild);
             console.log("find end")
-            kick = true;
         }
     }
 }
 
 var element = document.querySelector(".sidebar-assignee button");
-element.addEventListener('click', start, false);
+element.addEventListener('click', gh_cluster.start, false);
