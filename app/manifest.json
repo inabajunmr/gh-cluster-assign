@@ -4,19 +4,22 @@
   "version": "1.0",
   "description": "Assign multiple member by 1 click on GitHub",
   "browser_action": {
-    "default_icon": "icon.png"
+    "default_icon": "icon.png",
+    "default_popup": "uis/popup.html"
   },
   "permissions": [
     "https://github.com/*"
   ],
-  "icons" : {
+  "icons": {
     "128": "icon.png"
   },
   "content_scripts": [
     {
-      "matches": ["https://github.com/*"],
+      "matches": [
+        "https://github.com/*"
+      ],
       "js": [
-      "scripts/main.js"
+        "scripts/starter.js"
       ]
     }
   ]
