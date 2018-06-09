@@ -1,6 +1,7 @@
 `use strict`;
 var gh_cluster = {
-    storage_key: "gh-cluster-assign"
+    storage_key: "gh-cluster-assign",
+    already_start: false
 };
 
 // Create node for one cluster as asignee user.
@@ -70,7 +71,13 @@ gh_cluster.createReviwerInputTag = function (target_id) {
 }
 
 gh_cluster.start = function () {
-    console.log("start");
+    if (gh_cluster.already_start) {
+        // preserve duplicate cluster
+        return;
+    } else {
+        gh_cluster.already_start = true;
+    }
+
     // wait for loading asignee list dom
     var find_asignee_list_interbal_id = setInterval(constructAsigneeClusterOptionDom, 200);
     var find_reviewer_list_interbal_id = setInterval(constructReviewerClusterOptionDom, 200);
