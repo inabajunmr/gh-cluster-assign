@@ -1,15 +1,14 @@
 function createClusterDom(cluster_name, asignee_ids) {
-    var asignee_html = `
+    var cluster_html = `
     <div class="select-menu-item js-navigation-item" role="menuitem">
         <svg class="octicon octicon-check select-menu-item-icon" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true">
             <path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path>
         </svg>
-        <input style="display:none" type="checkbox" value="10000393" name="issue[user_assignee_ids][]">
-        <input style="display:none" type="checkbox" value="16970553" name="issue[user_assignee_ids][]">
+        <div class="cluster">
+        </div>
         <div class="select-menu-item-gravatar">
             <img src="https://avatars3.githubusercontent.com/u/10000393?s=60&amp;v=4" alt="" size="20" class="avatar avatar-small mr-1 js-avatar">
         </div>
-    
         <div class="select-menu-item-text lh-condensed">
             <span class="select-menu-item-heading">
                 <span class="js-username">CLUSTER1</span>
@@ -19,9 +18,25 @@ function createClusterDom(cluster_name, asignee_ids) {
     </div>
     `
     var tempEl = document.createElement('div');
-    tempEl.innerHTML = asignee_html;
+    tempEl.innerHTML = cluster_html;
+    var target = tempEl.firstElementChild;
+    var cluster = target.getElementsByClassName("cluster")[0];
+    console.log(asignee_ids);
 
-    return tempEl.firstElementChild;
+    asignee_ids.forEach(asignee_id => {
+        cluster.appendChild(createAsigneeInputTag(asignee_id));
+    });
+
+    return target;
+}
+
+function createAsigneeInputTag(asignee_id) {
+    var asignee_html = `<input style="display:none" type="checkbox" name="issue[user_assignee_ids][]">`;
+    var tempEl = document.createElement('div');
+    tempEl.innerHTML = asignee_html;
+    var target = tempEl.firstElementChild;
+    target.setAttribute("value", asignee_id);
+    return target;
 }
 
 function start() {
@@ -35,7 +50,8 @@ function start() {
         if (target != null) {
             clearInterval(find_asignee_list_interbal_id);
             var target2 = document.querySelector('div[data-filterable-for="assignee-filter-field"]');
-            target2.insertBefore(createClusterDom(), target2.firstChild);
+            var asignees = ["10000393", "16970553"];
+            target2.insertBefore(createClusterDom("test", asignees), target2.firstChild);
             console.log("find end")
             kick = true;
         }
