@@ -1,6 +1,6 @@
 `use strict`;
 var gh_cluster = {
-    storage_key:"gh-cluster-assign"
+    storage_key: "gh-cluster-assign"
 };
 
 // Create node for one cluster as asignee user.
@@ -53,18 +53,28 @@ gh_cluster.createAsigneeInputTag = function (asignee_id) {
 gh_cluster.start = function () {
     console.log("start");
     // wait for loading asignee list dom
-    var find_asignee_list_interbal_id = setInterval(findTargetElement, 1000);
+    var find_asignee_list_interbal_id = setInterval(constructClusterOptionDom, 1000);
 
-    function findTargetElement() {
+    function constructClusterOptionDom() {
         console.log("find start");
-        var asignee_list_asignee_node = document.querySelector('div[data-filterable-for="assignee-filter-field"] div');
-        if (asignee_list_asignee_node != null) {
-            clearInterval(find_asignee_list_interbal_id);
-            var asignee_list_node = document.querySelector('div[data-filterable-for="assignee-filter-field"]');
-            var asignees = ["10000393", "16970553"];
-            asignee_list_node.insertBefore(gh_cluster.createClusterDom("test", asignees), asignee_list_node.firstChild);
-            console.log("find end")
+        if (localStorage.getItem(gh_cluster.storage_key) == null) {
+            return;
         }
+        var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
+        console.log("construct clusters")
+        console.log(clusters)
+        // TODO loop by clusters and use asignee id and cluster name
+
+        Array.prototype.forEach.call(clusters, cluster => {
+            var asignee_list_asignee_node = document.querySelector('div[data-filterable-for="assignee-filter-field"] div');
+            if (asignee_list_asignee_node != null) {
+                clearInterval(find_asignee_list_interbal_id);
+                var asignee_list_node = document.querySelector('div[data-filterable-for="assignee-filter-field"]');
+                // var asignees = ["10000393", "16970553"];
+                asignee_list_node.insertBefore(gh_cluster.createClusterDom(cluster.name, cluster.ids), asignee_list_node.firstChild);
+                console.log("find end")
+            }
+        });
     }
 }
 
