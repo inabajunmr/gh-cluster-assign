@@ -66,5 +66,22 @@ gh_cluster.start = function () {
     }
 }
 
+// send current asignee list to background for register new cluster.
+gh_cluster.observeAsigneeList = function () {
+    var target = document.getElementsByClassName('discussion-sidebar')[0];
+    var observer = new MutationObserver(records => {
+        // TODO send asignee list to background
+        console.log("observe");
+    });
+    var options = {
+        subtree: true,
+        childList: true
+    };
+    observer.observe(target, options);
+}
+
 var element = document.querySelector(".sidebar-assignee button");
 element.addEventListener('click', gh_cluster.start, false);
+
+// start observe for send asignee to background
+gh_cluster.observeAsigneeList();
