@@ -72,6 +72,7 @@ gh_cluster.observeAsigneeList = function () {
     var observer = new MutationObserver(records => {
         // TODO send asignee list to background
         console.log("observe");
+        var current_asignee_list = gh_cluster.getCurrentAsigneeList();
     });
     var options = {
         subtree: true,
@@ -80,13 +81,16 @@ gh_cluster.observeAsigneeList = function () {
     observer.observe(target, options);
 }
 
+// return current asignee id list
 gh_cluster.getCurrentAsigneeList = function () {
-    var list = document.querySelector(".sidebar-assignee .js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
-
-    Array.prototype.forEach.call(list, asignee_node => {
+    var list_node = document.querySelector(".sidebar-assignee .js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
+    var asignee_ids = [];
+    Array.prototype.forEach.call(list_node, asignee_node => {
         var asignee_id = asignee_node.querySelector("[data-hovercard-user-id]").getAttribute("data-hovercard-user-id");
-        console.log(asignee_id);
+        asignee_ids.push(asignee_id);
     });
+    console.log(asignee_ids);
+    return asignee_ids;
 }
 
 var element = document.querySelector(".sidebar-assignee button");
