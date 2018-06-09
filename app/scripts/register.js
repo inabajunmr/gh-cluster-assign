@@ -2,19 +2,31 @@
 
 var gh_cluster_register = {};
 
-// TODO
 gh_cluster_register.addCluster = function () {
 
+    var storage_key = "gh-cluster-assign";
     var asignee_ids = chrome.extension.getBackgroundPage().asignee_ids;
+    var cluster_name = document.querySelectorAll('input')[0].value;
 
-    var element = document.getElementById("test");
+    if (cluster_name == '') {
+        document.getElementById("alert").innerHTML = "Specify cluster name!";
+        return;
+    }
 
-    var name_node = document.createTextNode(asignee_ids);
-    element.appendChild(name_node);
+    var clusters = JSON.parse(localStorage.getItem(storage_key));
+    if (clusters == null) {
+        clusters = [];
+    }
 
-    var element2 = document.getElementsByClassName(js-issue-title)[0];
-    element2.appendChild(name_node);
-    element.appendChild(element2);
+    var cluster = {
+        name: cluster_name,
+        ids: asignee_ids
+    };
+
+    clusters.push(cluster);
+
+    localStorage.setItem(storage_key, JSON.stringify(clusters));
+    document.getElementById("alert").innerHTML = JSON.stringify(clusters);
 }
 
 document.getElementById('add').addEventListener('click', gh_cluster_register.addCluster);
