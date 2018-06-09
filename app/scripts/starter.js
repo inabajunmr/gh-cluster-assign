@@ -1,5 +1,7 @@
 `use strict`;
-var gh_cluster = {};
+var gh_cluster = {
+    storage_key:"gh-cluster-assign"
+};
 
 // Create node for one cluster as asignee user.
 gh_cluster.createClusterDom = function (cluster_name, asignee_ids) {
@@ -96,23 +98,26 @@ gh_cluster.getCurrentAsigneeList = function () {
     return asignee_ids;
 }
 
+gh_cluster.sendClustersByStorage = function () {
+    var clusters = localStorage.getItem(gh_cluster.storage_key);
+    chrome.runtime.sendMessage({ value: { key: "cluster_list", value: clusters } });
+}
+
 var element = document.querySelector(".sidebar-assignee button");
 element.addEventListener('click', gh_cluster.start, false);
 
-// start observe for send asignee to background
-gh_cluster.sendAsigneeList();
-gh_cluster.observeAsigneeList();
-
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    var storage_key = "gh-cluster-assign";
+    // TODO shoud I filter by sender?
+    console.log("SENDER");
+    console.log(sender);
     console.log("add value from popup");
     console.log(message);
-    localStorage.setItem(storage_key, message);
+    localStorage.setItem(gh_cluster.storage_key, message);
     chrome.runtime.sendMessage({ value: { key: "cluster_list", value: message } });
     return;
 });
 
-// TODO function
-var storage_key = "gh-cluster-assign";
-var clusters = localStorage.getItem(storage_key);
-chrome.runtime.sendMessage({ value: { key: "cluster_list", value: clusters } });
+// start observe for send asignee to background
+gh_cluster.sendAsigneeList();
+gh_cluster.observeAsigneeList();
+gh_cluster.sendClustersByStorage()
