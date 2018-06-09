@@ -70,15 +70,18 @@ gh_cluster.start = function () {
 gh_cluster.observeAsigneeList = function () {
     var target = document.getElementsByClassName('discussion-sidebar')[0];
     var observer = new MutationObserver(records => {
-        // TODO send asignee list to background
-        console.log("observe");
-        var current_asignee_list = gh_cluster.getCurrentAsigneeList();
+        gh_cluster.sendAsigneeList();
     });
     var options = {
         subtree: true,
         childList: true
     };
     observer.observe(target, options);
+}
+
+gh_cluster.sendAsigneeList = function () {
+    var current_asignee_list = gh_cluster.getCurrentAsigneeList();
+    chrome.runtime.sendMessage({ value: current_asignee_list });
 }
 
 // return current asignee id list
@@ -97,4 +100,5 @@ var element = document.querySelector(".sidebar-assignee button");
 element.addEventListener('click', gh_cluster.start, false);
 
 // start observe for send asignee to background
+gh_cluster.sendAsigneeList();
 gh_cluster.observeAsigneeList();
