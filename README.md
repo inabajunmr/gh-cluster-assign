@@ -8,3 +8,4 @@ I'm bored to assign all team member on GitHub Issue or PR.
  * Using for assign reviewer
  * Remove cluster(option page)
  * Cluster icon(anytime my face now) 
+ * Run only GitHub issue and pr page
