@@ -176,15 +176,28 @@ gh_cluster.sendClustersByStorage = function () {
     chrome.runtime.sendMessage({ value: { key: "cluster_list", value: clusters } });
 }
 
-var element1 = document.querySelector(".sidebar-assignee button");
+gh_cluster.findButtonByTextNodeInSideBar = function (text) {
+    for (step = 1; step < 5; step++) {
+        var selector = ".sidebar-assignee:nth-child(" + step + ") button";
+        var element = document.querySelector(selector);
+        if (element == null) {
+            continue;
+        }
+        if (element.textContent.trim() == text) {
+            return element;
+        }
+    }
+    return null;
+}
+
+var element1 = gh_cluster.findButtonByTextNodeInSideBar("Assignees");
 element1.addEventListener('click', gh_cluster.start, false);
 
 // pull request only
-var element2 = document.querySelector(".sidebar-assignee:nth-child(2) button");
+var element2 = gh_cluster.findButtonByTextNodeInSideBar("Reviewers");
 if (element2 != null) {
     element2.addEventListener('click', gh_cluster.start, false);
 }
-
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // TODO shoud I filter by sender?
