@@ -14,7 +14,7 @@ gh_cluster.createClusterDom = function (cluster_name, target_ids, kind) {
         <div class="cluster">
         </div>
         <div class="select-menu-item-gravatar">
-            <img src="https://avatars3.githubusercontent.com/u/10000393?s=60&amp;v=4" alt="" size="20" class="avatar avatar-small mr-1 js-avatar">
+            <img src="https://github.com/inabajunmr/gh-cluster-assign/blob/master/app/icon.png?raw=true" alt="" size="20" class="avatar avatar-small mr-1 js-avatar">
         </div>
         <div class="select-menu-item-text lh-condensed">
             <span class="select-menu-item-heading">
