@@ -150,7 +150,8 @@ gh_cluster.sendAsigneeList = function () {
 
 // return current asignee id list
 gh_cluster.getCurrentAsigneeList = function () {
-    var list_node = document.querySelector(".sidebar-assignee .js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
+    var node = gh_cluster.findNodeByTextNodeInSideBar("Assignees");
+    var list_node = node.querySelector(".js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
     var asignee_ids = [];
     Array.prototype.forEach.call(list_node, asignee_node => {
         var asignee_id = asignee_node.querySelector("[data-hovercard-user-id]").getAttribute("data-hovercard-user-id");
@@ -161,7 +162,12 @@ gh_cluster.getCurrentAsigneeList = function () {
 }
 
 gh_cluster.getCurrentReviewerList = function () {
-    var list_node = document.querySelector(".sidebar-assignee:nth-child(2) .js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
+    var node = gh_cluster.findNodeByTextNodeInSideBar("Reviewers");
+    if(node == null) {
+        return [];
+    }
+    
+    var list_node = node.querySelector(".js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
     var reviewer_ids = [];
     Array.prototype.forEach.call(list_node, reviewer_node => {
         var reviewer_id = reviewer_node.querySelector("[data-hovercard-user-id]").getAttribute("data-hovercard-user-id");
@@ -174,6 +180,20 @@ gh_cluster.getCurrentReviewerList = function () {
 gh_cluster.sendClustersByStorage = function () {
     var clusters = localStorage.getItem(gh_cluster.storage_key);
     chrome.runtime.sendMessage({ value: { key: "cluster_list", value: clusters } });
+}
+
+gh_cluster.findNodeByTextNodeInSideBar = function (text) {
+    for (step = 1; step < 5; step++) {
+        var selector = ".sidebar-assignee:nth-child(" + step + ") button";
+        var element = document.querySelector(selector);
+        if (element == null) {
+            continue;
+        }
+        if (element.textContent.trim() == text) {
+            return document.querySelector(".sidebar-assignee:nth-child(" + step + ")");
+        }
+    }
+    return null;
 }
 
 gh_cluster.findButtonByTextNodeInSideBar = function (text) {
