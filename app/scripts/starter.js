@@ -1,4 +1,8 @@
 `use strict`;
+
+// debug mode
+// console.log = function(){}
+
 var gh_cluster = {
     storage_key: "gh-cluster-assign",
     already_start: false

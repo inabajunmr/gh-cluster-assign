@@ -1,5 +1,8 @@
 `use strict`;
 
+// debug mode
+// console.log = function(){}
+
 var gh_cluster_register = {};
 
 gh_cluster_register.addCluster = function () {

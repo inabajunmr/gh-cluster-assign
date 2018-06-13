@@ -1,3 +1,8 @@
+`use strict`;
+
+// debug mode
+// console.log = function(){}
+
 var asignee_ids = [];
 var cluster_list = [];
 

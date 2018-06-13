@@ -1,5 +1,8 @@
 var gh_cluster_option = {}
 
+// debug mode
+// console.log = function(){}
+
 gh_cluster_option.reflesh = function () {
 
     while (document.getElementById("clusters").firstChild) document.getElementById("clusters").removeChild(document.getElementById("clusters").firstChild);
