@@ -163,10 +163,10 @@ gh_cluster.getCurrentAsigneeList = function () {
 
 gh_cluster.getCurrentReviewerList = function () {
     var node = gh_cluster.findNodeByTextNodeInSideBar("Reviewers");
-    if(node == null) {
+    if (node == null) {
         return [];
     }
-    
+
     var list_node = node.querySelector(".js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
     var reviewer_ids = [];
     Array.prototype.forEach.call(list_node, reviewer_node => {
@@ -178,7 +178,9 @@ gh_cluster.getCurrentReviewerList = function () {
 }
 
 gh_cluster.sendClustersByStorage = function () {
+    console.log("send message");
     var clusters = localStorage.getItem(gh_cluster.storage_key);
+    console.log(clusters);
     chrome.runtime.sendMessage({ value: { key: "cluster_list", value: clusters } });
 }
 
@@ -219,14 +221,59 @@ if (element2 != null) {
     element2.addEventListener('click', gh_cluster.start, false);
 }
 
+gh_cluster.removeCluster = function (name) {
+    var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
+    console.log("before");
+    console.log(clusters);
+
+    var index;
+    for (var i = 0; i < clusters.length; i++) {
+        console.log(clusters[i].name);
+        console.log(name);
+        if (clusters[i].name === name) {
+            console.log("FUKC");
+            index = i;
+            break;
+        }
+    }
+
+    console.log("after");
+    console.log(index);
+    clusters.splice(index, 1);
+    localStorage.setItem(gh_cluster.storage_key, JSON.stringify(clusters));
+
+    gh_cluster.sendClustersByStorage();
+
+}
+
+
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // TODO shoud I filter by sender?
     console.log("SENDER");
     console.log(sender);
-    console.log("add value from popup");
     console.log(message);
-    localStorage.setItem(gh_cluster.storage_key, message);
-    chrome.runtime.sendMessage({ value: { key: "cluster_list", value: message } });
+    messageObj = JSON.parse(message);
+
+    console.log("JSON");
+    console.log(JSON.stringify(messageObj.value));
+
+    if (messageObj.event == "register") {
+        console.log("add value from popup");
+        localStorage.setItem(gh_cluster.storage_key, JSON.stringify(messageObj.value));
+        chrome.runtime.sendMessage({ value: { key: "cluster_list", value: JSON.stringify(messageObj.value) } });
+        return;
+    }
+
+    if (messageObj.event == "remove") {
+        console.log("remove value from option");
+        console.log(message.value);
+        gh_cluster.removeCluster(message.value);
+
+        chrome.runtime.sendMessage({ value: { key: "cluster_list", value: JSON.stringify(messageObj.value) } });
+        return;
+    }
+
+    console.log("nop");
     return;
 });
 

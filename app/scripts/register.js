@@ -31,7 +31,7 @@ gh_cluster_register.addCluster = function () {
 
     console.log("start send message to content");
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, JSON.stringify(clusters),
+        chrome.tabs.sendMessage(tabs[0].id, JSON.stringify({ value: clusters, event: "register" }),
             function (response) {
                 console.log(response);
             });
