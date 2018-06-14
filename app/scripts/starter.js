@@ -30,6 +30,7 @@ gh_cluster.createClusterDom = function (cluster_name, target_ids, kind) {
     var tempEl = document.createElement('div');
     tempEl.innerHTML = cluster_html;
     var target = tempEl.firstElementChild;
+    target.classList.add("cluster-" + kind);
     var cluster = target.getElementsByClassName("cluster")[0];
     console.log(target_ids);
 
@@ -74,11 +75,18 @@ gh_cluster.createReviwerInputTag = function (target_id) {
 }
 
 gh_cluster.start = function () {
+
     // wait for loading asignee list dom
     var find_asignee_list_interbal_id = setInterval(constructAsigneeClusterOptionDom, 200);
     var find_reviewer_list_interbal_id = setInterval(constructReviewerClusterOptionDom, 200);
 
     function constructAsigneeClusterOptionDom() {
+
+        if (document.getElementsByClassName("cluster-" + "assignee").length != 0) {
+            console.log("already exist cluster doms");
+            return;
+        }
+
         console.log("find start assignee cluster");
         if (localStorage.getItem(gh_cluster.storage_key) == null) {
             return;
@@ -92,7 +100,6 @@ gh_cluster.start = function () {
             if (asignee_list_asignee_node != null) {
                 clearInterval(find_asignee_list_interbal_id);
                 var asignee_list_node = document.querySelector('div[data-filterable-for="assignee-filter-field"]');
-                // var asignees = ["10000393", "16970553"];
                 asignee_list_node.insertBefore(gh_cluster.createClusterDom(cluster.name, cluster.ids, "assignee"), asignee_list_node.firstChild);
                 console.log("find end")
             }
@@ -100,7 +107,13 @@ gh_cluster.start = function () {
     }
 
     function constructReviewerClusterOptionDom() {
-        console.log("find start assignee reviewer");
+
+        if (document.getElementsByClassName("cluster-" + "reviewer").length != 0) {
+            console.log("already exist cluster doms");
+            return;
+        }
+
+        console.log("find start reviewer");
         if (localStorage.getItem(gh_cluster.storage_key) == null) {
             return;
         }
@@ -113,7 +126,6 @@ gh_cluster.start = function () {
             if (asignee_list_reviewer_node != null) {
                 clearInterval(find_reviewer_list_interbal_id);
                 var reviewer_list_node = document.querySelector('div[data-filterable-for="review-filter-field"]');
-                // reviewer_user_ids[]
                 reviewer_list_node.insertBefore(gh_cluster.createClusterDom(cluster.name, cluster.ids, "reviewer"), reviewer_list_node.firstChild);
                 console.log("find end")
             }
