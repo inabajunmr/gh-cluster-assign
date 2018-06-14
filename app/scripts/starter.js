@@ -153,8 +153,14 @@ gh_cluster.getCurrentAsigneeList = function () {
     var list_node = node.querySelector(".js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
     var asignee_ids = [];
     Array.prototype.forEach.call(list_node, asignee_node => {
-        var asignee_id = asignee_node.querySelector("[data-hovercard-user-id]").getAttribute("data-hovercard-user-id");
+        var asignee_id_node = asignee_node.querySelector("[data-hovercard-user-id]");
+        if(asignee_id_node == null){
+            continue;
+        }
+        var asignee_id = asignee_id_node.getAttribute("data-hovercard-user-id");
+
         asignee_ids.push(asignee_id);
+        console.log(asignee_id);
     });
     console.log(asignee_ids);
     return asignee_ids;
@@ -169,7 +175,13 @@ gh_cluster.getCurrentReviewerList = function () {
     var list_node = node.querySelector(".js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
     var reviewer_ids = [];
     Array.prototype.forEach.call(list_node, reviewer_node => {
-        var reviewer_id = reviewer_node.querySelector("[data-hovercard-user-id]").getAttribute("data-hovercard-user-id");
+
+        var asignee_id_node = reviewer_node.querySelector("[data-hovercard-user-id]");
+        if(asignee_id_node == null){
+            continue;
+        }
+
+        var reviewer_id = asignee_id_node.getAttribute("data-hovercard-user-id");
         reviewer_ids.push(reviewer_id);
     });
     console.log(reviewer_ids);
