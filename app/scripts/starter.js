@@ -4,8 +4,7 @@
 // console.log = function(){}
 
 var gh_cluster = {
-    storage_key: "gh-cluster-assign",
-    already_start: false
+    storage_key: "gh-cluster-assign"
 };
 
 // Create node for one cluster as asignee user.
@@ -75,24 +74,17 @@ gh_cluster.createReviwerInputTag = function (target_id) {
 }
 
 gh_cluster.start = function () {
-    if (gh_cluster.already_start) {
-        // preserve duplicate cluster
-        return;
-    } else {
-        gh_cluster.already_start = true;
-    }
-
     // wait for loading asignee list dom
     var find_asignee_list_interbal_id = setInterval(constructAsigneeClusterOptionDom, 200);
-    var find_reviewer_list_interbal_id = setInterval(constructReviewerClusterOptionDom, 200);
+    // var find_reviewer_list_interbal_id = setInterval(constructReviewerClusterOptionDom, 200);
 
     function constructAsigneeClusterOptionDom() {
-        console.log("find start");
+        console.log("find start assignee cluster");
         if (localStorage.getItem(gh_cluster.storage_key) == null) {
             return;
         }
         var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
-        console.log("construct clusters")
+        console.log("construct clusters for assignee")
         console.log(clusters)
 
         Array.prototype.forEach.call(clusters, cluster => {
@@ -108,12 +100,12 @@ gh_cluster.start = function () {
     }
 
     function constructReviewerClusterOptionDom() {
-        console.log("find start");
+        console.log("find start assignee reviewer");
         if (localStorage.getItem(gh_cluster.storage_key) == null) {
             return;
         }
         var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
-        console.log("construct clusters")
+        console.log("construct clusters for reviewer")
         console.log(clusters)
 
         Array.prototype.forEach.call(clusters, cluster => {
@@ -131,9 +123,12 @@ gh_cluster.start = function () {
 
 // send current asignee list to background for register new cluster.
 gh_cluster.observeAsigneeList = function () {
+    console.log("set observer");
     var target = document.getElementsByClassName('discussion-sidebar')[0];
     var observer = new MutationObserver(records => {
+        console.log("observe");
         gh_cluster.sendAsigneeList();
+        gh_cluster.hookAddClusterToList();
     });
     var options = {
         subtree: true,
@@ -216,15 +211,6 @@ gh_cluster.findButtonByTextNodeInSideBar = function (text) {
     return null;
 }
 
-var element1 = gh_cluster.findButtonByTextNodeInSideBar("Assignees");
-element1.addEventListener('click', gh_cluster.start, false);
-
-// pull request only
-var element2 = gh_cluster.findButtonByTextNodeInSideBar("Reviewers");
-if (element2 != null) {
-    element2.addEventListener('click', gh_cluster.start, false);
-}
-
 gh_cluster.removeCluster = function (name) {
     var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
     console.log("before");
@@ -281,7 +267,21 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     return;
 });
 
+gh_cluster.hookAddClusterToList = function () {
+    var element1 = gh_cluster.findButtonByTextNodeInSideBar("Assignees");
+    element1.addEventListener('click', gh_cluster.start, false);
+
+    // pull request only
+    var element2 = gh_cluster.findButtonByTextNodeInSideBar("Reviewers");
+    if (element2 != null) {
+        element2.addEventListener('click', gh_cluster.start, false);
+    }
+}
+
 // start observe for send asignee to background
 gh_cluster.sendAsigneeList();
 gh_cluster.observeAsigneeList();
 gh_cluster.sendClustersByStorage()
+gh_cluster.hookAddClusterToList();
+
+
