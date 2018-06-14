@@ -3,11 +3,12 @@
 I'm bored to assign all team member on GitHub Issue or PR.
 
 # Usage
+[Install by Chrome webstore](https://chrome.google.com/webstore/detail/icehdlbodfkkinmnkfjclfhmleokogki/publish-accepted?authuser=0&hl=ja)
+
 1. Select Asignees or Reviewers.
 2. Push extension icon.
 3. Specify cluster name and push `Add cluster`.
-4. Reflesh page(bug).
-5. You can select Cluster as Asignees or Reviewers.
+4. You can select Cluster as Asignees or Reviewers.
 
 # Sample
 
