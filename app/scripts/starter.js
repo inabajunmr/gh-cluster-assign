@@ -76,7 +76,7 @@ gh_cluster.createReviwerInputTag = function (target_id) {
 gh_cluster.start = function () {
     // wait for loading asignee list dom
     var find_asignee_list_interbal_id = setInterval(constructAsigneeClusterOptionDom, 200);
-    // var find_reviewer_list_interbal_id = setInterval(constructReviewerClusterOptionDom, 200);
+    var find_reviewer_list_interbal_id = setInterval(constructReviewerClusterOptionDom, 200);
 
     function constructAsigneeClusterOptionDom() {
         console.log("find start assignee cluster");
@@ -154,7 +154,7 @@ gh_cluster.getCurrentAsigneeList = function () {
     var asignee_ids = [];
     Array.prototype.forEach.call(list_node, asignee_node => {
         var asignee_id_node = asignee_node.querySelector("[data-hovercard-user-id]");
-        if(asignee_id_node != null){
+        if (asignee_id_node != null) {
             var asignee_id = asignee_id_node.getAttribute("data-hovercard-user-id");
             asignee_ids.push(asignee_id);
         }
@@ -173,7 +173,7 @@ gh_cluster.getCurrentReviewerList = function () {
     var reviewer_ids = [];
     Array.prototype.forEach.call(list_node, reviewer_node => {
         var asignee_id_node = reviewer_node.querySelector("[data-hovercard-user-id]");
-        if(asignee_id_node != null){
+        if (asignee_id_node != null) {
             var reviewer_id = asignee_id_node.getAttribute("data-hovercard-user-id");
             reviewer_ids.push(reviewer_id);
         }
@@ -281,6 +281,7 @@ gh_cluster.hookAddClusterToList = function () {
     // pull request only
     var element2 = gh_cluster.findButtonByTextNodeInSideBar("Reviewers");
     if (element2 != null) {
+        console.log("HOOK Reviewers");
         element2.addEventListener('click', gh_cluster.start, false);
     }
 }
