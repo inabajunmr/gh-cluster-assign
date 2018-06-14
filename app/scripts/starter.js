@@ -4,8 +4,7 @@
 // console.log = function(){}
 
 var gh_cluster = {
-    storage_key: "gh-cluster-assign",
-    already_start: false
+    storage_key: "gh-cluster-assign"
 };
 
 // Create node for one cluster as asignee user.
@@ -31,6 +30,7 @@ gh_cluster.createClusterDom = function (cluster_name, target_ids, kind) {
     var tempEl = document.createElement('div');
     tempEl.innerHTML = cluster_html;
     var target = tempEl.firstElementChild;
+    target.classList.add("cluster-" + kind);
     var cluster = target.getElementsByClassName("cluster")[0];
     console.log(target_ids);
 
@@ -75,24 +75,24 @@ gh_cluster.createReviwerInputTag = function (target_id) {
 }
 
 gh_cluster.start = function () {
-    if (gh_cluster.already_start) {
-        // preserve duplicate cluster
-        return;
-    } else {
-        gh_cluster.already_start = true;
-    }
 
     // wait for loading asignee list dom
     var find_asignee_list_interbal_id = setInterval(constructAsigneeClusterOptionDom, 200);
     var find_reviewer_list_interbal_id = setInterval(constructReviewerClusterOptionDom, 200);
 
     function constructAsigneeClusterOptionDom() {
-        console.log("find start");
+
+        if (document.getElementsByClassName("cluster-" + "assignee").length != 0) {
+            console.log("already exist cluster doms");
+            return;
+        }
+
+        console.log("find start assignee cluster");
         if (localStorage.getItem(gh_cluster.storage_key) == null) {
             return;
         }
         var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
-        console.log("construct clusters")
+        console.log("construct clusters for assignee")
         console.log(clusters)
 
         Array.prototype.forEach.call(clusters, cluster => {
@@ -100,7 +100,6 @@ gh_cluster.start = function () {
             if (asignee_list_asignee_node != null) {
                 clearInterval(find_asignee_list_interbal_id);
                 var asignee_list_node = document.querySelector('div[data-filterable-for="assignee-filter-field"]');
-                // var asignees = ["10000393", "16970553"];
                 asignee_list_node.insertBefore(gh_cluster.createClusterDom(cluster.name, cluster.ids, "assignee"), asignee_list_node.firstChild);
                 console.log("find end")
             }
@@ -108,12 +107,18 @@ gh_cluster.start = function () {
     }
 
     function constructReviewerClusterOptionDom() {
-        console.log("find start");
+
+        if (document.getElementsByClassName("cluster-" + "reviewer").length != 0) {
+            console.log("already exist cluster doms");
+            return;
+        }
+
+        console.log("find start reviewer");
         if (localStorage.getItem(gh_cluster.storage_key) == null) {
             return;
         }
         var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
-        console.log("construct clusters")
+        console.log("construct clusters for reviewer")
         console.log(clusters)
 
         Array.prototype.forEach.call(clusters, cluster => {
@@ -121,7 +126,6 @@ gh_cluster.start = function () {
             if (asignee_list_reviewer_node != null) {
                 clearInterval(find_reviewer_list_interbal_id);
                 var reviewer_list_node = document.querySelector('div[data-filterable-for="review-filter-field"]');
-                // reviewer_user_ids[]
                 reviewer_list_node.insertBefore(gh_cluster.createClusterDom(cluster.name, cluster.ids, "reviewer"), reviewer_list_node.firstChild);
                 console.log("find end")
             }
@@ -131,9 +135,12 @@ gh_cluster.start = function () {
 
 // send current asignee list to background for register new cluster.
 gh_cluster.observeAsigneeList = function () {
+    console.log("set observer");
     var target = document.getElementsByClassName('discussion-sidebar')[0];
     var observer = new MutationObserver(records => {
+        console.log("observe");
         gh_cluster.sendAsigneeList();
+        gh_cluster.hookAddClusterToList();
     });
     var options = {
         subtree: true,
@@ -158,8 +165,11 @@ gh_cluster.getCurrentAsigneeList = function () {
     var list_node = node.querySelector(".js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
     var asignee_ids = [];
     Array.prototype.forEach.call(list_node, asignee_node => {
-        var asignee_id = asignee_node.querySelector("[data-hovercard-user-id]").getAttribute("data-hovercard-user-id");
-        asignee_ids.push(asignee_id);
+        var asignee_id_node = asignee_node.querySelector("[data-hovercard-user-id]");
+        if (asignee_id_node != null) {
+            var asignee_id = asignee_id_node.getAttribute("data-hovercard-user-id");
+            asignee_ids.push(asignee_id);
+        }
     });
     console.log(asignee_ids);
     return asignee_ids;
@@ -174,9 +184,13 @@ gh_cluster.getCurrentReviewerList = function () {
     var list_node = node.querySelector(".js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
     var reviewer_ids = [];
     Array.prototype.forEach.call(list_node, reviewer_node => {
-        var reviewer_id = reviewer_node.querySelector("[data-hovercard-user-id]").getAttribute("data-hovercard-user-id");
-        reviewer_ids.push(reviewer_id);
+        var asignee_id_node = reviewer_node.querySelector("[data-hovercard-user-id]");
+        if (asignee_id_node != null) {
+            var reviewer_id = asignee_id_node.getAttribute("data-hovercard-user-id");
+            reviewer_ids.push(reviewer_id);
+        }
     });
+
     console.log(reviewer_ids);
     return reviewer_ids;
 }
@@ -214,15 +228,6 @@ gh_cluster.findButtonByTextNodeInSideBar = function (text) {
         }
     }
     return null;
-}
-
-var element1 = gh_cluster.findButtonByTextNodeInSideBar("Assignees");
-element1.addEventListener('click', gh_cluster.start, false);
-
-// pull request only
-var element2 = gh_cluster.findButtonByTextNodeInSideBar("Reviewers");
-if (element2 != null) {
-    element2.addEventListener('click', gh_cluster.start, false);
 }
 
 gh_cluster.removeCluster = function (name) {
@@ -281,7 +286,22 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     return;
 });
 
+gh_cluster.hookAddClusterToList = function () {
+    var element1 = gh_cluster.findButtonByTextNodeInSideBar("Assignees");
+    element1.addEventListener('click', gh_cluster.start, false);
+
+    // pull request only
+    var element2 = gh_cluster.findButtonByTextNodeInSideBar("Reviewers");
+    if (element2 != null) {
+        console.log("HOOK Reviewers");
+        element2.addEventListener('click', gh_cluster.start, false);
+    }
+}
+
 // start observe for send asignee to background
 gh_cluster.sendAsigneeList();
 gh_cluster.observeAsigneeList();
 gh_cluster.sendClustersByStorage()
+gh_cluster.hookAddClusterToList();
+
+
