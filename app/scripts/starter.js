@@ -7,73 +7,6 @@ var gh_cluster = {
     storage_key: "gh-cluster-assign"
 };
 
-// Create node for one cluster as asignee user.
-gh_cluster.createClusterDom = function (cluster_name, target_ids, kind) {
-    var cluster_html = `
-    <div class="select-menu-item js-navigation-item" role="menuitem">
-        <svg class="octicon octicon-check select-menu-item-icon" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true">
-            <path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path>
-        </svg>
-        <div class="cluster">
-        </div>
-        <div class="select-menu-item-gravatar">
-            <img src="https://github.com/inabajunmr/gh-cluster-assign/blob/master/app/icon.png?raw=true" alt="" size="20" class="avatar avatar-small mr-1 js-avatar">
-        </div>
-        <div class="select-menu-item-text lh-condensed">
-            <span class="select-menu-item-heading">
-                <span class="js-username"></span>
-                <span class="description js-description">gh-cluster</span>
-            </span>
-        </div>
-    </div>
-    `
-    var tempEl = document.createElement('div');
-    tempEl.innerHTML = cluster_html;
-    var target = tempEl.firstElementChild;
-    target.classList.add("cluster-" + kind);
-    var cluster = target.getElementsByClassName("cluster")[0];
-    console.log(target_ids);
-
-    console.log(kind);
-    if (kind == "assignee") {
-        target_ids.forEach(target_ids => {
-            cluster.appendChild(gh_cluster.createAssigneeInputTag(target_ids));
-        });
-    }
-
-    if (kind == "reviewer") {
-        target_ids.forEach(target_ids => {
-            cluster.appendChild(gh_cluster.createReviwerInputTag(target_ids));
-        });
-    }
-
-    var name_node = document.createTextNode(cluster_name);
-    var cluster_name_node = target.getElementsByClassName("js-username")[0];
-    cluster_name_node.appendChild(name_node);
-
-    return target;
-}
-
-// create node for input new asignee.(means one user)
-gh_cluster.createAssigneeInputTag = function (target_id) {
-    var asignee_html = `<input style="display:none" type="checkbox" name="issue[user_assignee_ids][]">`;
-    var tempEl = document.createElement('div');
-    tempEl.innerHTML = asignee_html;
-    var target = tempEl.firstElementChild;
-    target.setAttribute("value", target_id);
-    return target;
-}
-
-// create node for input new reviewer.(means one user)
-gh_cluster.createReviwerInputTag = function (target_id) {
-    var reviwer_html = `<input style="display:none" type="checkbox" name="reviewer_user_ids[]">`;
-    var tempEl = document.createElement('div');
-    tempEl.innerHTML = reviwer_html;
-    var target = tempEl.firstElementChild;
-    target.setAttribute("value", target_id);
-    return target;
-}
-
 gh_cluster.start = function () {
 
     // wait for loading asignee list dom
@@ -82,7 +15,7 @@ gh_cluster.start = function () {
 
     function constructAsigneeClusterOptionDom() {
 
-        if (document.getElementsByClassName("cluster-" + "assignee").length != 0) {
+        if (document.getElementsByClassName("cluster-assignee").length != 0) {
             console.log("already exist cluster doms");
             return;
         }
@@ -91,6 +24,7 @@ gh_cluster.start = function () {
         if (localStorage.getItem(gh_cluster.storage_key) == null) {
             return;
         }
+        
         var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
         console.log("construct clusters for assignee")
         console.log(clusters)
@@ -100,7 +34,7 @@ gh_cluster.start = function () {
             if (asignee_list_asignee_node != null) {
                 clearInterval(find_asignee_list_interbal_id);
                 var asignee_list_node = document.querySelector('div[data-filterable-for="assignee-filter-field"]');
-                asignee_list_node.insertBefore(gh_cluster.createClusterDom(cluster.name, cluster.ids, "assignee"), asignee_list_node.firstChild);
+                asignee_list_node.insertBefore(gh_operator.createClusterDom(cluster.name, cluster.ids, "assignee"), asignee_list_node.firstChild);
                 console.log("find end")
             }
         });
@@ -108,7 +42,7 @@ gh_cluster.start = function () {
 
     function constructReviewerClusterOptionDom() {
 
-        if (document.getElementsByClassName("cluster-" + "reviewer").length != 0) {
+        if (document.getElementsByClassName("cluster-reviewer").length != 0) {
             console.log("already exist cluster doms");
             return;
         }
@@ -126,7 +60,7 @@ gh_cluster.start = function () {
             if (asignee_list_reviewer_node != null) {
                 clearInterval(find_reviewer_list_interbal_id);
                 var reviewer_list_node = document.querySelector('div[data-filterable-for="review-filter-field"]');
-                reviewer_list_node.insertBefore(gh_cluster.createClusterDom(cluster.name, cluster.ids, "reviewer"), reviewer_list_node.firstChild);
+                reviewer_list_node.insertBefore(gh_operator.createClusterDom(cluster.name, cluster.ids, "reviewer"), reviewer_list_node.firstChild);
                 console.log("find end")
             }
         });
@@ -161,7 +95,7 @@ gh_cluster.sendAsigneeList = function () {
 
 // return current asignee id list
 gh_cluster.getCurrentAsigneeList = function () {
-    var node = gh_cluster.findNodeByTextNodeInSideBar("Assignees");
+    var node = gh_operator.findNodeByTextNodeInSideBar("Assignees");
     var list_node = node.querySelector(".js-issue-sidebar-form .css-truncate").getElementsByTagName("p");
     var asignee_ids = [];
     Array.prototype.forEach.call(list_node, asignee_node => {
@@ -176,7 +110,7 @@ gh_cluster.getCurrentAsigneeList = function () {
 }
 
 gh_cluster.getCurrentReviewerList = function () {
-    var node = gh_cluster.findNodeByTextNodeInSideBar("Reviewers");
+    var node = gh_operator.findNodeByTextNodeInSideBar("Reviewers");
     if (node == null) {
         return [];
     }
@@ -200,34 +134,6 @@ gh_cluster.sendClustersByStorage = function () {
     var clusters = localStorage.getItem(gh_cluster.storage_key);
     console.log(clusters);
     chrome.runtime.sendMessage({ value: { key: "cluster_list", value: clusters } });
-}
-
-gh_cluster.findNodeByTextNodeInSideBar = function (text) {
-    for (step = 1; step < 5; step++) {
-        var selector = ".sidebar-assignee:nth-child(" + step + ") button";
-        var element = document.querySelector(selector);
-        if (element == null) {
-            continue;
-        }
-        if (element.textContent.trim() == text) {
-            return document.querySelector(".sidebar-assignee:nth-child(" + step + ")");
-        }
-    }
-    return null;
-}
-
-gh_cluster.findButtonByTextNodeInSideBar = function (text) {
-    for (step = 1; step < 5; step++) {
-        var selector = ".sidebar-assignee:nth-child(" + step + ") button";
-        var element = document.querySelector(selector);
-        if (element == null) {
-            continue;
-        }
-        if (element.textContent.trim() == text) {
-            return element;
-        }
-    }
-    return null;
 }
 
 gh_cluster.removeCluster = function (name) {
@@ -287,11 +193,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 
 gh_cluster.hookAddClusterToList = function () {
-    var element1 = gh_cluster.findButtonByTextNodeInSideBar("Assignees");
+    var element1 = gh_operator.findButtonByTextNodeInSideBar("Assignees");
     element1.addEventListener('click', gh_cluster.start, false);
 
     // pull request only
-    var element2 = gh_cluster.findButtonByTextNodeInSideBar("Reviewers");
+    var element2 = gh_operator.findButtonByTextNodeInSideBar("Reviewers");
     if (element2 != null) {
         console.log("HOOK Reviewers");
         element2.addEventListener('click', gh_cluster.start, false);

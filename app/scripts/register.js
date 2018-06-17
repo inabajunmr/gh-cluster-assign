@@ -7,7 +7,6 @@ var gh_cluster_register = {};
 
 gh_cluster_register.addCluster = function () {
 
-    var storage_key = "gh-cluster-assign";
     var asignee_ids = chrome.extension.getBackgroundPage().asignee_ids;
     var clusters = chrome.extension.getBackgroundPage().cluster_list;
     var cluster_name = document.querySelectorAll('input')[0].value;
