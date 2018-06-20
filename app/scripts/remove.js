@@ -5,6 +5,8 @@ var gh_cluster_option = {}
 
 gh_cluster_option.reflesh = function () {
 
+    console.log("Reflesh remove window")
+
     while (document.getElementById("clusters").firstChild) document.getElementById("clusters").removeChild(document.getElementById("clusters").firstChild);
 
     var clusters = chrome.extension.getBackgroundPage().cluster_list;
@@ -14,6 +16,9 @@ gh_cluster_option.reflesh = function () {
     }
 
     clusters = JSON.parse(clusters);
+
+
+    console.log(`Remove Clusters ${clusters}`)
 
     Array.prototype.forEach.call(clusters, cluster => {
         var one_cluster_html = `<li><span></span><button></button></li>`;

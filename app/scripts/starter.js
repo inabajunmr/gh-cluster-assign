@@ -24,7 +24,7 @@ gh_cluster.start = function () {
         if (localStorage.getItem(gh_cluster.storage_key) == null) {
             return;
         }
-        
+
         var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
         console.log("construct clusters for assignee")
         console.log(clusters)
@@ -137,6 +137,7 @@ gh_cluster.sendClustersByStorage = function () {
 }
 
 gh_cluster.removeCluster = function (name) {
+    console.log(`START REMOVE CLUSTER ${name}`)
     var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
     console.log("before");
     console.log(clusters);
@@ -155,12 +156,13 @@ gh_cluster.removeCluster = function (name) {
     console.log("after");
     console.log(index);
     clusters.splice(index, 1);
+    console.log(clusters);
+    console.log("END REMOVE CLUSTER")
+
     localStorage.setItem(gh_cluster.storage_key, JSON.stringify(clusters));
 
     gh_cluster.sendClustersByStorage();
-
 }
-
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // TODO shoud I filter by sender?
@@ -181,10 +183,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     if (messageObj.event == "remove") {
         console.log("remove value from option");
-        console.log(message.value);
-        gh_cluster.removeCluster(message.value);
-
-        chrome.runtime.sendMessage({ value: { key: "cluster_list", value: JSON.stringify(messageObj.value) } });
+        console.log(messageObj.value);
+        gh_cluster.removeCluster(messageObj.value);
+        gh_cluster.sendClustersByStorage();
         return;
     }
 
