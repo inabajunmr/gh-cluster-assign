@@ -1,6 +1,6 @@
 # gh-cluster-assign
 
-I'm bored to assign all team member on GitHub Issue or PR.
+I'm bored to assign multiple team members on GitHub Issue or PR.
 
 # Usage
 [Install by Chrome webstore](https://chrome.google.com/webstore/detail/icehdlbodfkkinmnkfjclfhmleokogki/publish-accepted?authuser=0&hl=ja)
