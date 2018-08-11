@@ -28,7 +28,7 @@ gh_operator.createReviwerInputTag = function(target_id) {
 // find element in side bar by button text(ex. 'Reviewer'/ 'Assignee')
 gh_operator.findNodeByTextNodeInSideBar = function(text) {
   for (step = 1; step < 5; step++) {
-    var selector = `.sidebar-assignee:nth-child(${step}) button`;
+    var selector = `.sidebar-assignee:nth-child(${step}) summary`;
     var element = document.querySelector(selector);
     if (element == null) {
       continue;
@@ -43,7 +43,7 @@ gh_operator.findNodeByTextNodeInSideBar = function(text) {
 // find button element in side bar by text
 gh_operator.findButtonByTextNodeInSideBar = function(text) {
   for (step = 1; step < 5; step++) {
-    var selector = `.sidebar-assignee:nth-child(${step}) button`;
+    var selector = `.sidebar-assignee:nth-child(${step}) summary`;
     var element = document.querySelector(selector);
     if (element == null) {
       continue;

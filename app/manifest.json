@@ -8,27 +8,18 @@
     "default_popup": "uis/popup.html"
   },
   "background": {
-    "scripts": [
-      "scripts/background.js"
-    ],
+    "scripts": ["scripts/background.js"],
     "persistent": false
   },
-  "permissions": [
-    "https://github.com/*",
-    "storage"
-  ],
+  "permissions": ["https://github.com/*", "storage"],
   "icons": {
     "128": "icon_128.png"
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://github.com/*"
-      ],
-      "js": [
-        "scripts/gh-operator.js",
-        "scripts/starter.js"
-      ]
+      "matches": ["https://github.com/*"],
+      "run_at": "document_end",
+      "js": ["scripts/gh-operator.js", "scripts/starter.js"]
     }
   ]
 }
