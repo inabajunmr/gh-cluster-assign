@@ -13,3 +13,10 @@ I'm bored to assign multiple team members on GitHub Issue or PR.
 # Sample
 
 ![gh-cluster-assign](https://user-images.githubusercontent.com/10000393/41362151-9a18020e-6f6b-11e8-90a6-1fa20a7ebcdd.gif)
+
+
+# Development
+
+## Formatter
+
+Code format by [pretty-quick](https://github.com/azz/pretty-quick)
