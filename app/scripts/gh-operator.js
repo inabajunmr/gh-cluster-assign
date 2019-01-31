@@ -3,24 +3,24 @@
 // debug mode
 // console.log = function(){}
 
-var gh_operator = {};
+let gh_operator = {};
 
 // create node for input new asignee.(means one user)
 gh_operator.createAssigneeInputTag = function(target_id) {
-  var asignee_html = `<input style="display:none" type="checkbox" name="issue[user_assignee_ids][]">`;
-  var tempEl = document.createElement("div");
+  let asignee_html = `<input style="display:none" type="checkbox" name="issue[user_assignee_ids][]">`;
+  let tempEl = document.createElement("div");
   tempEl.innerHTML = asignee_html;
-  var target = tempEl.firstElementChild;
+  let target = tempEl.firstElementChild;
   target.setAttribute("value", target_id);
   return target;
 };
 
 // create node for input new reviewer.(means one user)
 gh_operator.createReviwerInputTag = function(target_id) {
-  var reviwer_html = `<input style="display:none" type="checkbox" name="reviewer_user_ids[]">`;
-  var tempEl = document.createElement("div");
+  let reviwer_html = `<input style="display:none" type="checkbox" name="reviewer_user_ids[]">`;
+  let tempEl = document.createElement("div");
   tempEl.innerHTML = reviwer_html;
-  var target = tempEl.firstElementChild;
+  let target = tempEl.firstElementChild;
   target.setAttribute("value", target_id);
   return target;
 };
@@ -28,8 +28,8 @@ gh_operator.createReviwerInputTag = function(target_id) {
 // find element in side bar by button text(ex. 'Reviewer'/ 'Assignee')
 gh_operator.findNodeByTextNodeInSideBar = function(text) {
   for (step = 1; step < 5; step++) {
-    var selector = `.sidebar-assignee:nth-child(${step}) summary`;
-    var element = document.querySelector(selector);
+    let selector = `.sidebar-assignee:nth-child(${step}) summary`;
+    let element = document.querySelector(selector);
     if (element == null) {
       continue;
     }
@@ -43,8 +43,8 @@ gh_operator.findNodeByTextNodeInSideBar = function(text) {
 // find button element in side bar by text
 gh_operator.findButtonByTextNodeInSideBar = function(text) {
   for (step = 1; step < 5; step++) {
-    var selector = `.sidebar-assignee:nth-child(${step}) summary`;
-    var element = document.querySelector(selector);
+    let selector = `.sidebar-assignee:nth-child(${step}) summary`;
+    let element = document.querySelector(selector);
     if (element == null) {
       continue;
     }
@@ -57,7 +57,7 @@ gh_operator.findButtonByTextNodeInSideBar = function(text) {
 
 // Create node for one cluster as asignee user.
 gh_operator.createClusterDom = function(cluster_name, target_ids, kind) {
-  var cluster_html = `
+  let cluster_html = `
     <div class="select-menu-item js-navigation-item" role="menuitem">
         <svg class="octicon octicon-check select-menu-item-icon" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true">
             <path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path>
@@ -75,11 +75,11 @@ gh_operator.createClusterDom = function(cluster_name, target_ids, kind) {
         </div>
     </div>
     `;
-  var tempEl = document.createElement("div");
+  let tempEl = document.createElement("div");
   tempEl.innerHTML = cluster_html;
-  var target = tempEl.firstElementChild;
+  let target = tempEl.firstElementChild;
   target.classList.add("cluster-" + kind);
-  var cluster = target.getElementsByClassName("cluster")[0];
+  let cluster = target.getElementsByClassName("cluster")[0];
   console.log(target_ids);
 
   console.log(kind);
@@ -95,8 +95,8 @@ gh_operator.createClusterDom = function(cluster_name, target_ids, kind) {
     });
   }
 
-  var name_node = document.createTextNode(cluster_name);
-  var cluster_name_node = target.getElementsByClassName("js-username")[0];
+  let name_node = document.createTextNode(cluster_name);
+  let cluster_name_node = target.getElementsByClassName("js-username")[0];
   cluster_name_node.appendChild(name_node);
 
   return target;

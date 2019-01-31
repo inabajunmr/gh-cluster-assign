@@ -3,17 +3,17 @@
 // debug mode
 // console.log = function(){}
 
-var gh_cluster = {
+let gh_cluster = {
   storage_key: "gh-cluster-assign"
 };
 
 gh_cluster.start = function() {
   // wait for loading asignee list dom
-  var find_asignee_list_interbal_id = setInterval(
+  let find_asignee_list_interbal_id = setInterval(
     constructAsigneeClusterOptionDom,
     200
   );
-  var find_reviewer_list_interbal_id = setInterval(
+  let find_reviewer_list_interbal_id = setInterval(
     constructReviewerClusterOptionDom,
     200
   );
@@ -29,17 +29,17 @@ gh_cluster.start = function() {
       return;
     }
 
-    var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
+    let clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
     console.log("construct clusters for assignee");
     console.log(clusters);
 
     Array.prototype.forEach.call(clusters, cluster => {
-      var asignee_list_asignee_node = document.querySelector(
+      let asignee_list_asignee_node = document.querySelector(
         'div[data-filterable-for="assignee-filter-field"] div'
       );
       if (asignee_list_asignee_node != null) {
         clearInterval(find_asignee_list_interbal_id);
-        var asignee_list_node = document.querySelector(
+        let asignee_list_node = document.querySelector(
           'div[data-filterable-for="assignee-filter-field"]'
         );
         asignee_list_node.insertBefore(
@@ -61,17 +61,17 @@ gh_cluster.start = function() {
     if (localStorage.getItem(gh_cluster.storage_key) == null) {
       return;
     }
-    var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
+    let clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
     console.log("construct clusters for reviewer");
     console.log(clusters);
 
     Array.prototype.forEach.call(clusters, cluster => {
-      var asignee_list_reviewer_node = document.querySelector(
+      let asignee_list_reviewer_node = document.querySelector(
         'div[data-filterable-for="review-filter-field"] div'
       );
       if (asignee_list_reviewer_node != null) {
         clearInterval(find_reviewer_list_interbal_id);
-        var reviewer_list_node = document.querySelector(
+        let reviewer_list_node = document.querySelector(
           'div[data-filterable-for="review-filter-field"]'
         );
         reviewer_list_node.insertBefore(
@@ -87,13 +87,13 @@ gh_cluster.start = function() {
 // send current asignee list to background for register new cluster.
 gh_cluster.observeAsigneeList = function() {
   console.log("set observer");
-  var target = document.getElementsByClassName("discussion-sidebar")[0];
-  var observer = new MutationObserver(records => {
+  let target = document.getElementsByClassName("discussion-sidebar")[0];
+  let observer = new MutationObserver(records => {
     console.log("observe");
     gh_cluster.sendAsigneeList();
     gh_cluster.hookAddClusterToList();
   });
-  var options = {
+  let options = {
     subtree: true,
     childList: true
   };
@@ -101,11 +101,11 @@ gh_cluster.observeAsigneeList = function() {
 };
 
 gh_cluster.sendAsigneeList = function() {
-  var current_asignee_list = gh_cluster.getCurrentAsigneeList();
-  var current_reviewer_list = gh_cluster.getCurrentReviewerList();
+  let current_asignee_list = gh_cluster.getCurrentAsigneeList();
+  let current_reviewer_list = gh_cluster.getCurrentReviewerList();
 
-  var concat_list = current_asignee_list.concat(current_reviewer_list);
-  var merge_list = concat_list.filter(function(item, pos) {
+  let concat_list = current_asignee_list.concat(current_reviewer_list);
+  let merge_list = concat_list.filter(function(item, pos) {
     return concat_list.indexOf(item) == pos;
   });
 
@@ -116,17 +116,17 @@ gh_cluster.sendAsigneeList = function() {
 
 // return current asignee id list
 gh_cluster.getCurrentAsigneeList = function() {
-  var node = gh_operator.findNodeByTextNodeInSideBar("Assignees");
-  var list_node = node
+  let node = gh_operator.findNodeByTextNodeInSideBar("Assignees");
+  let list_node = node
     .querySelector(".js-issue-sidebar-form .css-truncate")
     .getElementsByTagName("p");
-  var asignee_ids = [];
+  let asignee_ids = [];
   Array.prototype.forEach.call(list_node, asignee_node => {
-    var asignee_id_node = asignee_node.querySelector(
+    let asignee_id_node = asignee_node.querySelector(
       "[data-hovercard-user-id]"
     );
     if (asignee_id_node != null) {
-      var asignee_id = asignee_id_node.getAttribute("data-hovercard-user-id");
+      let asignee_id = asignee_id_node.getAttribute("data-hovercard-user-id");
       asignee_ids.push(asignee_id);
     }
   });
@@ -135,21 +135,21 @@ gh_cluster.getCurrentAsigneeList = function() {
 };
 
 gh_cluster.getCurrentReviewerList = function() {
-  var node = gh_operator.findNodeByTextNodeInSideBar("Reviewers");
+  let node = gh_operator.findNodeByTextNodeInSideBar("Reviewers");
   if (node == null) {
     return [];
   }
 
-  var list_node = node
+  let list_node = node
     .querySelector(".js-issue-sidebar-form .css-truncate")
     .getElementsByTagName("p");
-  var reviewer_ids = [];
+  let reviewer_ids = [];
   Array.prototype.forEach.call(list_node, reviewer_node => {
-    var asignee_id_node = reviewer_node.querySelector(
+    let asignee_id_node = reviewer_node.querySelector(
       "[data-hovercard-user-id]"
     );
     if (asignee_id_node != null) {
-      var reviewer_id = asignee_id_node.getAttribute("data-hovercard-user-id");
+      let reviewer_id = asignee_id_node.getAttribute("data-hovercard-user-id");
       reviewer_ids.push(reviewer_id);
     }
   });
@@ -160,7 +160,7 @@ gh_cluster.getCurrentReviewerList = function() {
 
 gh_cluster.sendClustersByStorage = function() {
   console.log("send message");
-  var clusters = localStorage.getItem(gh_cluster.storage_key);
+  let clusters = localStorage.getItem(gh_cluster.storage_key);
   console.log(clusters);
   chrome.runtime.sendMessage({
     value: { key: "cluster_list", value: clusters }
@@ -169,12 +169,12 @@ gh_cluster.sendClustersByStorage = function() {
 
 gh_cluster.removeCluster = function(name) {
   console.log(`START REMOVE CLUSTER ${name}`);
-  var clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
+  let clusters = JSON.parse(localStorage.getItem(gh_cluster.storage_key));
   console.log("before");
   console.log(clusters);
 
-  var index;
-  for (var i = 0; i < clusters.length; i++) {
+  let index;
+  for (let i = 0; i < clusters.length; i++) {
     console.log(clusters[i].name);
     console.log(name);
     if (clusters[i].name === name) {
@@ -230,11 +230,11 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 });
 
 gh_cluster.hookAddClusterToList = function() {
-  var element1 = gh_operator.findButtonByTextNodeInSideBar("Assignees");
+  let element1 = gh_operator.findButtonByTextNodeInSideBar("Assignees");
   element1.addEventListener("click", gh_cluster.start, false);
 
   // pull request only
-  var element2 = gh_operator.findButtonByTextNodeInSideBar("Reviewers");
+  let element2 = gh_operator.findButtonByTextNodeInSideBar("Reviewers");
   if (element2 != null) {
     console.log("HOOK Reviewers");
     element2.addEventListener("click", gh_cluster.start, false);

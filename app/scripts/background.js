@@ -3,8 +3,8 @@
 // debug mode
 // console.log = function(){}
 
-var asignee_ids = [];
-var cluster_list = [];
+let asignee_ids = [];
+let cluster_list = [];
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.value.key === "asignee_ids") {
