@@ -40,19 +40,19 @@ gh_cluster.start = function() {
 
     if (asignee_list_asignee_node != null) {
       clearInterval(find_asignee_list_interbal_id);
-    }else{
+    } else {
       return;
     }
 
     Array.prototype.forEach.call(clusters, cluster => {
-        let asignee_list_node = document.querySelector(
-          'div[data-filterable-for="assignee-filter-field"]'
-        );
-        asignee_list_node.insertBefore(
-          gh_operator.createClusterDom(cluster.name, cluster.ids, "assignee"),
-          asignee_list_node.firstChild
-        );
-        console.log("find end");
+      let asignee_list_node = document.querySelector(
+        'div[data-filterable-for="assignee-filter-field"]'
+      );
+      asignee_list_node.insertBefore(
+        gh_operator.createClusterDom(cluster.name, cluster.ids, "assignee"),
+        asignee_list_node.firstChild
+      );
+      console.log("find end");
     });
   }
 
@@ -74,20 +74,19 @@ gh_cluster.start = function() {
     );
     if (asignee_list_reviewer_node != null) {
       clearInterval(find_reviewer_list_interbal_id);
-    }else{
+    } else {
       return;
     }
 
     Array.prototype.forEach.call(clusters, cluster => {
-
-        let reviewer_list_node = document.querySelector(
-          'div[data-filterable-for="review-filter-field"]'
-        );
-        reviewer_list_node.insertBefore(
-          gh_operator.createClusterDom(cluster.name, cluster.ids, "reviewer"),
-          reviewer_list_node.firstChild
-        );
-        console.log("find end");
+      let reviewer_list_node = document.querySelector(
+        'div[data-filterable-for="review-filter-field"]'
+      );
+      reviewer_list_node.insertBefore(
+        gh_operator.createClusterDom(cluster.name, cluster.ids, "reviewer"),
+        reviewer_list_node.firstChild
+      );
+      console.log("find end");
     });
   }
 };
@@ -130,13 +129,13 @@ gh_cluster.getCurrentAsigneeList = function() {
     .getElementsByTagName("p");
   let asignee_ids = [];
   Array.prototype.forEach.call(list_node, asignee_node => {
-    let asignee_id_node = asignee_node.querySelector(
-      "[data-hovercard-url]"
-    );
+    let asignee_id_node = asignee_node.querySelector("[data-hovercard-url]");
 
-    console.log(asignee_id_node)
+    console.log(asignee_id_node);
     if (asignee_id_node != null) {
-      let asignee_id = asignee_id_node.getAttribute("data-hovercard-url").replace("/hovercards?user_id=","");
+      let asignee_id = asignee_id_node
+        .getAttribute("data-hovercard-url")
+        .replace("/hovercards?user_id=", "");
       asignee_ids.push(asignee_id);
     }
   });
@@ -155,11 +154,11 @@ gh_cluster.getCurrentReviewerList = function() {
     .getElementsByTagName("p");
   let reviewer_ids = [];
   Array.prototype.forEach.call(list_node, reviewer_node => {
-    let asignee_id_node = reviewer_node.querySelector(
-      "[data-hovercard-url]"
-    );
+    let asignee_id_node = reviewer_node.querySelector("[data-hovercard-url]");
     if (asignee_id_node != null) {
-      let reviewer_id = asignee_id_node.getAttribute("data-hovercard-url").replace("/hovercards?user_id=","");
+      let reviewer_id = asignee_id_node
+        .getAttribute("data-hovercard-url")
+        .replace("/hovercards?user_id=", "");
       reviewer_ids.push(reviewer_id);
     }
   });
