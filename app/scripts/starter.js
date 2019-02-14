@@ -16,7 +16,7 @@ gh_cluster.start = function() {
   );
   let find_reviewer_list_interbal_id = setInterval(
     constructReviewerClusterOptionDom,
-    20000
+    200
   );
 
   function constructAsigneeClusterOptionDom() {
