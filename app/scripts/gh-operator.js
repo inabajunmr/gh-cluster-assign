@@ -1,7 +1,6 @@
 `use strict`;
 
 // debug mode
-// console.log = function(){}
 
 let gh_operator = {};
 
@@ -81,9 +80,7 @@ gh_operator.createClusterDom = function(cluster_name, target_ids, kind) {
   let target = tempEl.firstElementChild;
   target.classList.add("cluster-" + kind);
   let cluster = target.getElementsByClassName("cluster")[0];
-  console.log(target_ids);
 
-  console.log(kind);
   if (kind == "assignee") {
     target_ids.forEach(target_ids => {
       cluster.appendChild(gh_operator.createAssigneeInputTag(target_ids));

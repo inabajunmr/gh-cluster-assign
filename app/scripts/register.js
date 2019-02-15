@@ -1,7 +1,6 @@
 `use strict`;
 
 // debug mode
-// console.log = function(){}
 
 var gh_cluster_register = {};
 
@@ -9,8 +8,6 @@ gh_cluster_register.addCluster = function() {
   var asignee_ids = chrome.extension.getBackgroundPage().asignee_ids;
   var clusters = chrome.extension.getBackgroundPage().cluster_list;
   var cluster_name = document.querySelectorAll("input")[0].value;
-
-  console.log(clusters);
 
   if (clusters == null) {
     clusters = [];
@@ -30,17 +27,13 @@ gh_cluster_register.addCluster = function() {
 
   clusters.push(cluster);
 
-  console.log("start send message to content");
   chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     chrome.tabs.sendMessage(
       tabs[0].id,
       JSON.stringify({ value: clusters, event: "register" }),
-      function(response) {
-        console.log(response);
-      }
+      function(response) {}
     );
   });
-  console.log("end send message to content");
 
   return;
 };
