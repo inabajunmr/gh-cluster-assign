@@ -1,3 +1,10 @@
+/**
+ * @name TODO
+ * @kind problem
+ * @problem.severity warning
+ * @id javascript/comment/todo
+ */
+
 import javascript
 
 from Comment c
