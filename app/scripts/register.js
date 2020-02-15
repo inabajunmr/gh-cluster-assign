@@ -4,6 +4,9 @@
 
 var gh_cluster_register = {};
 
+// TODO a
+// TODO b
+
 gh_cluster_register.addCluster = function() {
   var asignee_ids = chrome.extension.getBackgroundPage().asignee_ids;
   var clusters = chrome.extension.getBackgroundPage().cluster_list;
