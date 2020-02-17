@@ -18,6 +18,8 @@ gh_cluster.start = function() {
     200
   );
 
+  var unused = "test"
+
   function constructAsigneeClusterOptionDom() {
     if (document.getElementsByClassName("cluster-assignee").length != 0) {
       clearInterval(find_asignee_list_interbal_id);
